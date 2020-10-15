@@ -7,7 +7,7 @@
 export CUDA_VISIBLE_DEVICES="0"
 CURRENT_DIR=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 CLUE_DATA_DIR=$CURRENT_DIR/CLUEdataset
-ALBERT_TINY_DIR=$CURRENT_DIR/albert_tiny
+ALBERT_TINY_DIR=$CURRENT_DIR/../../nlp_model/albert_tiny_489k
 
 download_data(){
   TASK_NAME=$1
@@ -77,14 +77,14 @@ run_task() {
   "
   cd $CURRENT_DIR
   echo "Start running..."
-  python run_classifier_clue.py \
+  python3.6 run_classifier_clue.py \
         $COMMON_ARGS \
         --do_train=true \
         --do_eval=false \
         --do_predict=false
 
   echo "Start predict..."
-  python run_classifier_clue.py \
+  python3.6 run_classifier_clue.py \
         $COMMON_ARGS \
         --do_train=false \
         --do_eval=true \
@@ -93,8 +93,17 @@ run_task() {
 
 ##command##task_name##model_name##max_seq_length##train_batch_size##learning_rate##num_train_epochs##save_checkpoints_steps##tpu_ip
 run_task afqmc 128 16 2e-5 3 300
-run_task cmnli 128 64 3e-5 2 300
-run_task csl 128 16 1e-5 5 100
-run_task iflytek 128 32 2e-5 3 300
-run_task tnews 128 16 2e-5 3 300
-run_task wsc 128 16 1e-5 10 10
+#run_task cmnli 128 64 3e-5 2 300
+#run_task csl 128 16 1e-5 5 100
+#run_task iflytek 128 32 2e-5 3 300
+#run_task tnews 128 16 2e-5 3 300
+#run_task wsc 128 16 1e-5 10 10
+
+
+#AFQMC:蚂蚁语义相似度(Acc)；
+#CMNLI: 自然语言推理中文版; 
+#CSL: 中国科学文献数据集; 
+#IFLYTEK:长文本分类(Acc); 
+#TNEWS:文本分类(Acc)；
+#WSC: Winograd模式挑战中文版; 
+#COPA: 因果推断; 
