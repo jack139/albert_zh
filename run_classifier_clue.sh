@@ -92,8 +92,8 @@ run_task() {
 }
 
 ##command##task_name##model_name##max_seq_length##train_batch_size##learning_rate##num_train_epochs##save_checkpoints_steps##tpu_ip
-run_task afqmc 128 16 2e-5 3 300
-#run_task cmnli 128 64 3e-5 2 300
+#run_task afqmc 128 16 2e-5 3 300
+run_task cmnli 128 64 3e-5 2 300
 #run_task csl 128 16 1e-5 5 100
 #run_task iflytek 128 32 2e-5 3 300
 #run_task tnews 128 16 2e-5 3 300
