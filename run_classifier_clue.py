@@ -242,6 +242,7 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
             segment_ids=segment_ids,
             label_id=label_id,
             is_real_example=True)
+
     return feature
 
 
@@ -255,8 +256,7 @@ def file_based_convert_examples_to_features(
         if ex_index % 10000 == 0:
             tf.logging.info("Writing example %d of %d" % (ex_index, len(examples)))
 
-        feature = convert_single_example(ex_index, example, label_list,
-                                                                         max_seq_length, tokenizer)
+        feature = convert_single_example(ex_index, example, label_list, max_seq_length, tokenizer)
 
         def create_int_feature(values):
             f = tf.train.Feature(int64_list=tf.train.Int64List(value=list(values)))
@@ -267,8 +267,7 @@ def file_based_convert_examples_to_features(
         features["input_mask"] = create_int_feature(feature.input_mask)
         features["segment_ids"] = create_int_feature(feature.segment_ids)
         features["label_ids"] = create_int_feature([feature.label_id])
-        features["is_real_example"] = create_int_feature(
-                [int(feature.is_real_example)])
+        features["is_real_example"] = create_int_feature([int(feature.is_real_example)])
 
         tf_example = tf.train.Example(features=tf.train.Features(feature=features))
         writer.write(tf_example.SerializeToString())
@@ -456,8 +455,7 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
             init_string = ""
             if var.name in initialized_variable_names:
                 init_string = ", *INIT_FROM_CKPT*"
-            tf.logging.info("  name = %s, shape = %s%s", var.name, var.shape,
-                                            init_string)
+            tf.logging.info("  name = %s, shape = %s%s", var.name, var.shape, init_string)
 
         output_spec = None
         if mode == tf.estimator.ModeKeys.TRAIN:
@@ -482,8 +480,7 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
                         "eval_loss": loss,
                 }
 
-            eval_metrics = (metric_fn,
-                                            [per_example_loss, label_ids, logits, is_real_example])
+            eval_metrics = (metric_fn, [per_example_loss, label_ids, logits, is_real_example])
             output_spec = tf.contrib.tpu.TPUEstimatorSpec(
                     mode=mode,
                     loss=total_loss,
@@ -811,9 +808,26 @@ def main(_):
 
 
 if __name__ == "__main__":
-    flags.mark_flag_as_required("data_dir")
-    flags.mark_flag_as_required("task_name")
-    flags.mark_flag_as_required("vocab_file")
-    flags.mark_flag_as_required("bert_config_file")
-    flags.mark_flag_as_required("output_dir")
+    #flags.mark_flag_as_required("data_dir")
+    #flags.mark_flag_as_required("task_name")
+    #flags.mark_flag_as_required("vocab_file")
+    #flags.mark_flag_as_required("bert_config_file")
+    #flags.mark_flag_as_required("output_dir")
+
+    FLAGS.task_name='cmnli'
+    FLAGS.data_dir=os.path.join('CLUEdataset', FLAGS.task_name)
+    FLAGS.vocab_file='../../nlp_model/albert_tiny_489k/vocab.txt'
+    FLAGS.bert_config_file='../../nlp_model/albert_tiny_489k/albert_config_tiny.json'
+    FLAGS.init_checkpoint='../../nlp_model/albert_tiny_489k/albert_model.ckpt'
+    FLAGS.max_seq_length=128
+    FLAGS.train_batch_size=16
+    FLAGS.learning_rate=3e-5
+    FLAGS.num_train_epochs=2
+    FLAGS.save_checkpoints_steps=300
+    FLAGS.output_dir=FLAGS.task_name+'_output'
+
+    FLAGS.do_train=True
+    FLAGS.do_eval=False
+    FLAGS.do_predict=False
+
     tf.app.run()
